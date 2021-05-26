@@ -106,11 +106,12 @@ class InvitationUsage(models.Model):
         return 'Usage for ' + str(self.invitation) + 'at ' + str(self.created_at)
 
 
+# If the amount of usages is GTE to the set max_uses on the invitation, de-activate the invitation and link.
 def invitation_usage_pre_save_receiver(sender, instance, *args, **kwargs):
     if instance.invitation.uses.count() >= instance.invitation.max_uses:
         instance.invitation.active = False
     instance.invitation.save()
 
 
-# runs unique slug generator before the object is saved
+# connect to Invitation Presave
 post_save.connect(invitation_usage_pre_save_receiver, sender=InvitationUsage)
