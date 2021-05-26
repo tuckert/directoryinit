@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Directory Detail</h2>
+<div class="card" style="width:400px">
+{#  <img class="card-img-top" src="img_avatar1.png" alt="Card image">#}
+  <div class="card-body">
+    <h4 class="card-title">{{ object.name}}</h4>
+{#    <p class="card-text">Some example text.</p>#}
+    <a href="{% url 'edit-directory' object.slug %}" class="btn btn-primary">Edit details</a>
+  </div>
+  <ul class="list-group list-group-flush">
+
+    <li class="list-group-item">Contact Email: {{ object.contact_email }}</li>
+    <li class="list-group-item">Contact Telephone: {{ object.contact_telephone }}</li>
+        <li class="list-group-item">Current Users: {{ object.tenants.count }}</li>
+    <li class="list-group-item">Invitations Sent: {{ object.invitations.count }}
+      <a href="{% url 'create-invitation' object.slug %}" class="btn btn-success btn-outline-dark">Send invitation</a></li>
+  </ul>
+</div>
+{% endblock %}

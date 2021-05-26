@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Directory List</h2>
+{% for dir in object_list %}
+  <a href="{{ dir.get_absolute_url }}">
+  {{ dir.name }}<br></a>
+  {{ dir.contact_telephone }}<br>
+  {{ dir.welcome_message }}<br><br>
+{% endfor %}
+<a href="{% url 'create-directory' %}">Create New Directory</a>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <br>
+  <form method="post">{% csrf_token %}
+{{ form.as_p }}
+<hr>
+  {{ number_formset.management_form }}
+  {% for form in number_formset %}
+    {{ form.as_ul }}
+    <br>
+  {% endfor %}
+  <input type="submit" value="Update Data">
+  </form>
+{% endblock %}
