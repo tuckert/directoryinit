@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Directory List</h2>
+<h2>Invitation List for {{ object_list.first.directory }}</h2>
 {% for invitation in object_list %}
   <a href="{% url 'invitation' pk=invitation.id %}">
   {{ invitation }}<br></a>

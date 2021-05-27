@@ -232,3 +232,12 @@ class ListInvitationView(LoginRequiredMixin, ListView):
 
 class ThankYouView(TemplateView):
     template_name = 'thank_you.html'
+
+
+class TenantDetailView(OnlyUsersDirectoriesMixin, DetailView):
+    template_name = 'tenant_detail.html'
+
+    def get_queryset(self):
+        queryset = super(TenantDetailView, self).get_queryset()
+        queryset = queryset.filter(slug=self.kwargs['slug'])
+        return models.Tenant.objects.filter(directory__in=queryset)

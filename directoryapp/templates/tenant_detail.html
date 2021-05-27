@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>
+  Tenant Detail
+</h2>
+  <div class="card-body">
+    <h4 class="card-title">{{ tenant }}</h4>
+{#    <p class="card-text">Some example text.</p>#}
+    <a href="{% url 'view-directory' slug=object.directory.slug %}" class="btn btn-primary">Goto</a>
+  </div>
+  <ul class="list-group list-group-flush">
+
+    <li class="list-group-item">{{ object.active_status }}.  Links are created at the moment they are sent to the tenant.
+    Below is the link sent.  You may resend it if still active.</li>
+    <li class="list-group-item">{{ object.link }}</li>
+        <li class="list-group-item">{{ object.uses.count }} uses of {{ object.max_uses }} maximum uses.</li>
+    <li class="list-group-item">Invitations Created and Sent: {{ object.created_at }}</li>
+    <li class="list-group-item">Sent to {{ object.name_sent_to }} at {{ object.number_sent_to }} {{ object.email_sent_to }}</li>
+  </ul>
+</div>
+{% endblock %}

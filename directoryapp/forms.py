@@ -63,6 +63,7 @@ class CreateTenantFromInvitationForm(forms.ModelForm):
         disabled=True
     )
 
+
 class CreateTenantTelephoneNumberForm(forms.ModelForm):
     class Meta:
         model = TelephoneNumber

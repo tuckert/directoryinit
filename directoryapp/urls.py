@@ -12,6 +12,7 @@ urlpatterns = [
     path('<slug>/create-invitation/', views.CreateInvitationView.as_view(), name='create-invitation'),
     path('<slug>/create-invitation/<tenant>/', views.CreateInvitationView.as_view(), name='create-invitation-from-tenant'),
     path('<slug>/', views.DetailDirectoryView.as_view(), name='view-directory'),
+    path('<slug>/tenant/<pk>', views.TenantDetailView.as_view(), name='tenant-view'),
     path('<slug>/invitations/', views.ListInvitationView.as_view(), name='view-invitations'),
     path('<slug>/edit/', views.UpdateDirectoryView.as_view(), name='edit-directory'),
 
