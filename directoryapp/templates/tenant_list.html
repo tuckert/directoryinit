@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Tenant List for {{ object_list.first.directory }}</h2>
+{% for tenant in object_list %}
+  <div class="card" style="width: 500px">
+  <div class="card-body">
+  <div class="card-title">
+  <a href="{{ tenant.get_absolute_url }}">
+  {{ tenant.name }}<br></a></div>
+  <ul class="list-group list-group-flush">
+  {% for number in tenant.numbers.all %}
+    <li class="list-group-item">{{ number.number }} : {{ number.get_type_display }}<br></li>
+    {% endfor %}</ul>
+  </div></div>
+{% endfor %}
+{% endblock %}

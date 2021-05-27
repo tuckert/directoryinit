@@ -241,3 +241,13 @@ class TenantDetailView(OnlyUsersDirectoriesMixin, DetailView):
         queryset = super(TenantDetailView, self).get_queryset()
         queryset = queryset.filter(slug=self.kwargs['slug'])
         return models.Tenant.objects.filter(directory__in=queryset)
+
+
+class TenantListView(OnlyUsersDirectoriesMixin, ListView):
+    template_name = 'tenant_list.html'
+    model = models.Tenant
+
+    def get_queryset(self):
+        queryset = super(TenantListView, self).get_queryset()
+        directory = queryset.get(slug=self.kwargs['slug'])
+        return directory.tenants.all()

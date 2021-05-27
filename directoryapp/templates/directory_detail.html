@@ -13,7 +13,7 @@
 
     <li class="list-group-item">Contact Email: {{ object.contact_email }}</li>
     <li class="list-group-item">Contact Telephone: {{ object.contact_telephone }}</li>
-        <li class="list-group-item">Current Users: {{ object.tenants.count }}</li>
+        <li class="list-group-item">Current Signed on Tenants: {{ object.tenants.count }} <a href="{% url 'list-tenants' object.slug %}" class="btn btn-primary">View all</a></li>
     <li class="list-group-item">Invitations Sent: {{ object.invitations.count }}
       <a href="{% url 'create-invitation' object.slug %}" class="btn btn-success btn-outline-dark">Send invitation</a></li>
   </ul>

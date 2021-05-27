@@ -48,6 +48,9 @@ class Tenant(models.Model):
     def __str__(self):
         return self.name + ' @ ' + str(self.directory)
 
+    def get_absolute_url(self):
+        return '/d/' + self.directory.slug + '/tenant/' + str(self.pk)
+
 
 TELEPHONE_TYPE_CHOICES = [
     ('ho', 'Home'),
