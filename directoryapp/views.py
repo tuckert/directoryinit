@@ -146,7 +146,8 @@ class CreateInvitationView(LoginRequiredMixin, FormView):
             )
         return super(CreateInvitationView, self).form_valid(form)
 
-    def get_form_kwargs(self):
+    def get_initial(self):
+        initial = {}
         try:
             if self.kwargs['tenant']:
                 tenant = models.Tenant.objects.get(pk=self.kwargs['tenant'])
@@ -154,12 +155,11 @@ class CreateInvitationView(LoginRequiredMixin, FormView):
                 tenant = None
         except KeyError:
             tenant = None
-        kwargs = super(CreateInvitationView, self).get_form_kwargs()
         if tenant:
-            kwargs['initial']['tenant_name'] = tenant.name
+            initial['tenant_name'] = tenant.name
             if tenant.numbers.exists():
-                kwargs['initial']['tenant_number'] = tenant.numbers.first().number
-        return kwargs
+                initial['tenant_number'] = tenant.numbers.first().number
+        return initial.copy()
 
     def get_success_url(self):
         return reverse('invitation', kwargs={'pk': self.invitation.id})
