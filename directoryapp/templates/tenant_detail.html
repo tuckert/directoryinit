@@ -20,4 +20,5 @@
     <li class="list-group-item">Sent to {{ object.name_sent_to }} at {{ object.number_sent_to }} {{ object.email_sent_to }}</li>
   </ul>
 </div>
+  <a href="{% url 'invitation' object.invitations.first.pk %}" class="btn btn-lg btn-dark">Invitation</a>
 {% endblock %}

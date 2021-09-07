@@ -14,26 +14,26 @@
 
       <!-- Nav Item - Dashboard -->
       <li class="nav-item">
-        <a class="nav-link" href="/">
+        <a class="nav-link" href="{% url 'list-directories' %}">
           <i class="fas fa-fw fa-tachometer-alt"></i>
-            <span>Systems</span></a>
+            <span>All Directories</span></a>
       </li>
 
       <!-- Divider -->
       <hr class="sidebar-divider">
-{% if system %}
-      <!-- Heading -->
-      <div class="sidebar-heading">
-        {{ system.name }}
-      </div>
-
-      <!-- Nav Item - Pages Collapse Menu -->
-
-    <li class="nav-item">
-        <a class="nav-link" href="/">
-            <i class="fas fa-fw fa-users"></i>
-            <span>Users</span></a>
-    </li>
+{#{% if object %}#}
+{#      <!-- Heading -->#}
+{#      <div class="sidebar-heading">#}
+{#        {{ object.name }}#}
+{#      </div>#}
+{##}
+{#      <!-- Nav Item - Pages Collapse Menu -->#}
+{##}
+{#    <li class="nav-item">#}
+{#        <a class="nav-link" href="/">#}
+{#            <i class="fas fa-fw fa-users"></i>#}
+{#            <span>Users</span></a>#}
+{#    </li>#}
 
 {#      <!-- Nav Item - Utilities Collapse Menu -->#}
 {#    <li class="nav-item">#}
@@ -55,13 +55,13 @@
 {#            <i class="fas fa-fw fa-history"></i>#}
 {#            <span><del>Event History</del></span></a>#}
 {#    </li>#}
-      <!-- Divider -->
-      <hr class="sidebar-divider">
-        {% endif %}
+{#      <!-- Divider -->#}
+{#      <hr class="sidebar-divider">#}
+{#        {% endif %}#}
     <li class="nav-item">
         <a class="nav-link" href="/">
-            <i class="fas fa-fw fa-dollar-sign"></i>
-            <span>Subscriptions</span></a>
+            <i class="fas fa-fw fa-sms"></i>
+            <span>Contact Admin</span></a>
     </li>
       <!-- Sidebar Toggler (Sidebar) -->
       <div class="text-center d-none d-md-inline">

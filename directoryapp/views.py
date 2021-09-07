@@ -66,29 +66,49 @@ class UpdateDirectoryView(LoginRequiredMixin, UpdateView):
     template_name = 'directory_form.html'
 
 
+# Directory; Delete
 class DeleteDirectoryView(LoginRequiredMixin, DeleteView):
     model = models.Directory
     fields = '__all__'
     template_name = 'directory_form.html'
 
 
+# Directory; View Single
 class DetailDirectoryView(OnlyUsersDirectoriesMixin, LoginRequiredMixin, DetailView):
     template_name = 'directory_detail.html'
     model = models.Directory
 
 
+# TODO Ugly Home Page fix
 class HomeView(LoginRequiredMixin, TemplateView):
     template_name = 'home.html'
 
 
+# TODO Remove Use Directory List View instead
 class DashboardView(LoginRequiredMixin, TemplateView):
     template_name = 'dashboard.html'
 
 
+# Invitation; Create
 class CreateInvitationView(LoginRequiredMixin, FormView):
     form_class = forms.CreateInvitationFromScratchForm
+    initial = {
+
+    }
     template_name = 'create_invitation.html'
     invitation = None
+
+    def get_context_data(self, **kwargs):
+        context = super(CreateInvitationView, self).get_context_data(**kwargs)
+        try:
+            if self.kwargs['slug']:
+                directory = models.Directory.objects.get(slug=self.kwargs['slug'])
+            else:
+                directory = None
+        except KeyError:
+            directory = None
+        context['directory'] = directory
+        return context
 
     def form_valid(self, form):
         try:
@@ -126,10 +146,27 @@ class CreateInvitationView(LoginRequiredMixin, FormView):
             )
         return super(CreateInvitationView, self).form_valid(form)
 
+    def get_form_kwargs(self):
+        try:
+            if self.kwargs['tenant']:
+                tenant = models.Tenant.objects.get(pk=self.kwargs['tenant'])
+            else:
+                tenant = None
+        except KeyError:
+            tenant = None
+        kwargs = super(CreateInvitationView, self).get_form_kwargs()
+        if tenant:
+            kwargs['initial']['tenant_name'] = tenant.name
+            if tenant.numbers.exists():
+                kwargs['initial']['tenant_number'] = tenant.numbers.first().number
+        return kwargs
+
     def get_success_url(self):
         return reverse('invitation', kwargs={'pk': self.invitation.id})
 
 
+# Invitation; Verify
+# Tenant, Telephone Number; Create
 class InvitationUsageView(CreateUpdateView):
     model = models.Tenant
     form_class = forms.CreateTenantFromInvitationForm
@@ -196,8 +233,9 @@ class InvitationUsageView(CreateUpdateView):
             self.object.directory = self.invitation.directory
             self.object.save()
             self.get_context_data()
-            self.invitation.tenant = self.object
-            self.invitation.save()
+            if self.invitation.private_use:
+                self.invitation.tenant = self.object
+                self.invitation.save()
             if self.numbers_formset.is_valid():
                 tenant_numbers = self.numbers_formset.save()
             else:
@@ -211,16 +249,19 @@ class InvitationUsageView(CreateUpdateView):
             models.InvitationUsage.objects.create(
                 invitation=self.invitation,
                 ip_address=get_client_ip(self.request),
-                fields_updated=serializers.serialize("json", tenant_numbers+[self.object])
+                fields_updated=serializers.serialize("json", tenant_numbers+[self.object]),
+                tenant=self.object,
             )
         return HttpResponseRedirect(self.get_success_url())
 
 
+# Invitation; Single Detail View
 class InvitationDetailView(LoginRequiredMixin, DetailView):
     template_name = 'invitation_detail.html'
     model = models.Invitation
 
 
+# Invitation; List All View
 class ListInvitationView(LoginRequiredMixin, ListView):
     model = models.Invitation
     fields = '__all__'
@@ -234,6 +275,7 @@ class ThankYouView(TemplateView):
     template_name = 'thank_you.html'
 
 
+# Tenant; Individual View
 class TenantDetailView(OnlyUsersDirectoriesMixin, DetailView):
     template_name = 'tenant_detail.html'
 

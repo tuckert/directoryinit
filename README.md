@@ -7,4 +7,4 @@ This tool is for an installer or manager or a new system to send text or email m
 ### Requirements
 Email setup is currently done through gmail.  Twilio is also used for sending text messages.
 #### The fine print
-This project is uncompleted and not fit for deployment at this time.  As with most of my projects, I have a bad habit of getting sidetracked and working on something else.  
+This project is uncompleted and not fit for deployment at this time.  As with most of my projects, I have a bad habit of getting sidetracked and working on something else.  All views in this project are Class based, something I hadn't dont much of yet, but now I prefer.  

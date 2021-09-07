@@ -37,6 +37,7 @@ SEND_VIA_CHOICES = [
     ('tx', 'Send via Text Message'),
     ('em', 'Send via Email'),
     ('bo', 'Send via Text Message AND Email'),
+    ('no', 'Do not send')
 ]
 
 
@@ -44,8 +45,10 @@ class CreateInvitationFromScratchForm(forms.Form):
     directory_choices = None  # set on creation
     tenant_name = forms.CharField(max_length=30, required=False)
     # directory = forms.ModelChoiceField(queryset=None)
-    tenant_number = forms.CharField(max_length=15, validators=[validate_us_phone_number])
+    tenant_number = forms.CharField(max_length=15, validators=[validate_us_phone_number], required=False)
     tenant_email = forms.EmailField(required=False)
+    unlimited_uses = forms.BooleanField(required=True, initial=True)
+    max_uses = forms.IntegerField(required=True, min_value=1, max_value=1000, initial=3)
     send_via = forms.ChoiceField(choices=SEND_VIA_CHOICES)
 
 

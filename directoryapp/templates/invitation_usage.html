@@ -2,6 +2,7 @@
 
 {% block content %}
   <br>
+  {{ object.directory.welcome_message }}
   <form method="post">{% csrf_token %}
 {{ form.as_p }}
 <hr>

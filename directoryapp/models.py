@@ -29,6 +29,11 @@ class Directory(models.Model):
     def __str__(self):
         return self.name
 
+    def unused_invitations(self):
+        print('wtf')
+        unused = self.invitations.filter(tenant=None).count()
+        return str(unused) + ' unused links sent.'
+
 
 def system_pre_save_receiver(sender, instance, *args, **kwargs):
     if not instance.slug:
@@ -50,6 +55,11 @@ class Tenant(models.Model):
 
     def get_absolute_url(self):
         return '/d/' + self.directory.slug + '/tenant/' + str(self.pk)
+
+    def invites_and_uses(self):
+        invites = self.invitations.count()
+        uses = InvitationUsage.objects.filter(invitation__in=self.invitations.all()).count()
+        return str(invites) + ' invitations sent; used ' + str(uses) + ' times.'
 
 
 TELEPHONE_TYPE_CHOICES = [
@@ -82,6 +92,7 @@ class Invitation(models.Model):
     tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE, related_name='invitations', blank=True, null=True)
     directory = models.ForeignKey(Directory, on_delete=models.CASCADE, null=False, related_name='invitations')
     active = models.BooleanField(default=True)
+    private_use = models.BooleanField(default=False)
     max_uses = models.IntegerField()
     link = models.CharField(max_length=120, blank=True, null=True)
     name_sent_to = models.CharField(max_length=15, blank=True, null=True)
@@ -102,6 +113,7 @@ class Invitation(models.Model):
 class InvitationUsage(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     invitation = models.ForeignKey(Invitation, on_delete=models.CASCADE, related_name='uses')
+    tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE, related_name='invitation_uses')
     ip_address = models.GenericIPAddressField()
     fields_updated = models.JSONField()
 
@@ -111,9 +123,10 @@ class InvitationUsage(models.Model):
 
 # If the amount of usages is GTE to the set max_uses on the invitation, de-activate the invitation and link.
 def invitation_usage_pre_save_receiver(sender, instance, *args, **kwargs):
-    if instance.invitation.uses.count() >= instance.invitation.max_uses:
+    if instance.invitation.uses.count() >= instance.invitation.max_uses\
+            and instance.invitation.max_uses is not 0:
         instance.invitation.active = False
-    instance.invitation.save()
+        instance.invitation.save()
 
 
 # connect to Invitation Presave
