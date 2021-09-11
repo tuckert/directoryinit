@@ -15,6 +15,7 @@ urlpatterns = [
     path('<slug>/tenants/', views.TenantListView.as_view(), name='list-tenants'),
     path('<slug>/tenant/<pk>', views.TenantDetailView.as_view(), name='tenant-view'),
     path('<slug>/tenant/<pk>/invitations', views.ListInvitationView.as_view(), name='view-tenant-invitations'),
+    path('<slug>/tenant/<pk>/edit', views.TenantEditView.as_view(), name='edit-tenant'),
     path('<slug>/invitations/', views.ListInvitationView.as_view(), name='view-directory-invitations'),
     path('<slug>/edit/', views.UpdateDirectoryView.as_view(), name='edit-directory'),
 

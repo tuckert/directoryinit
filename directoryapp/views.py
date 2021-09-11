@@ -92,9 +92,6 @@ class DashboardView(LoginRequiredMixin, TemplateView):
 # Invitation; Create
 class CreateInvitationView(LoginRequiredMixin, FormView):
     form_class = forms.CreateInvitationFromScratchForm
-    initial = {
-
-    }
     template_name = 'create_invitation.html'
     invitation = None
 
@@ -159,6 +156,7 @@ class CreateInvitationView(LoginRequiredMixin, FormView):
             initial['tenant_name'] = tenant.name
             if tenant.numbers.exists():
                 initial['tenant_number'] = tenant.numbers.first().number
+            initial['tenant_email'] = tenant.contact_email
         return initial.copy()
 
     def get_success_url(self):
@@ -197,6 +195,7 @@ class InvitationUsageView(CreateUpdateView):
             self.invitation = models.Invitation.objects.get(pk=uid)
         except (TypeError, ValueError, OverflowError):
             self.invitation = None
+        print(account_activation_token.check_token(self.invitation, self.kwargs['token']))
 
         if self.invitation is not None and account_activation_token.check_token(self.invitation, self.kwargs['token']):
             return super(InvitationUsageView, self).dispatch(request, *args, **kwargs)
@@ -211,7 +210,7 @@ class InvitationUsageView(CreateUpdateView):
             models.TelephoneNumber,
             max_num=self.invitation.directory.max_telephones_per_tenant,
             extra=self.invitation.directory.max_telephones_per_tenant,
-            fields='__all__'
+            fields='__all__',
         )
         if self.request.POST:
             self.numbers_formset = NumberFormset(
@@ -220,7 +219,7 @@ class InvitationUsageView(CreateUpdateView):
             )
         else:
             self.numbers_formset = NumberFormset(
-                        instance=self.object
+                instance=self.object,
             )
         context['number_formset'] = self.numbers_formset
         return context
@@ -291,5 +290,17 @@ class TenantListView(OnlyUsersDirectoriesMixin, ListView):
 
     def get_queryset(self):
         queryset = super(TenantListView, self).get_queryset()
+        directory = queryset.get(slug=self.kwargs['slug'])
+        return directory.tenants.all()
+
+
+class TenantEditView(OnlyUsersDirectoriesMixin, UpdateView):
+    model = models.Tenant
+    slug_field = 'pk'
+    fields = '__all__'
+    template_name = 'directory_form.html'
+
+    def get_queryset(self):
+        queryset = super(TenantEditView, self).get_queryset()
         directory = queryset.get(slug=self.kwargs['slug'])
         return directory.tenants.all()

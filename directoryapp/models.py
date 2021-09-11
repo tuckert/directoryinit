@@ -49,6 +49,7 @@ class Tenant(models.Model):
     directory = models.ForeignKey(Directory, on_delete=models.CASCADE, null=False, related_name='tenants')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    contact_email = models.EmailField(null=True, blank=True)
 
     def __str__(self):
         return self.name + ' @ ' + str(self.directory)
@@ -102,18 +103,32 @@ class Invitation(models.Model):
     def __str__(self):
         return 'Invitation for ' + str(self.tenant)
 
+    # Convert days to expire to seconds.  Used in the invitation check_token function
+    @property
+    def days_to_expire_in_seconds(self):
+        seconds = self.days_to_expire * 24 * 60 * 60
+        print(seconds)
+        return seconds
+
     @property
     def active_status(self):
         if self.active:
             return 'Invitation link is active'
         else:
-            return 'Invitation link has been deativated'
+            return 'Invitation link has been used up or deactivated'
+
+    @property
+    def bg_color(self):
+        if self.active:
+            return 'alert-success'
+        else:
+            return 'alert-danger'
 
 
 class InvitationUsage(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     invitation = models.ForeignKey(Invitation, on_delete=models.CASCADE, related_name='uses')
-    tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE, related_name='invitation_uses')
+    tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE, related_name='invitation_uses', null=True)
     ip_address = models.GenericIPAddressField()
     fields_updated = models.JSONField()
 
@@ -123,8 +138,7 @@ class InvitationUsage(models.Model):
 
 # If the amount of usages is GTE to the set max_uses on the invitation, de-activate the invitation and link.
 def invitation_usage_pre_save_receiver(sender, instance, *args, **kwargs):
-    if instance.invitation.uses.count() >= instance.invitation.max_uses\
-            and instance.invitation.max_uses is not 0:
+    if instance.invitation.uses.count() >= instance.invitation.max_uses != 0:
         instance.invitation.active = False
         instance.invitation.save()
 

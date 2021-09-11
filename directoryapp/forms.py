@@ -47,7 +47,7 @@ class CreateInvitationFromScratchForm(forms.Form):
     # directory = forms.ModelChoiceField(queryset=None)
     tenant_number = forms.CharField(max_length=15, validators=[validate_us_phone_number], required=False)
     tenant_email = forms.EmailField(required=False)
-    unlimited_uses = forms.BooleanField(required=True, initial=True)
+    unlimited_uses = forms.BooleanField(initial=True, required=False)
     max_uses = forms.IntegerField(required=True, min_value=1, max_value=1000, initial=3)
     send_via = forms.ChoiceField(choices=SEND_VIA_CHOICES)
 
