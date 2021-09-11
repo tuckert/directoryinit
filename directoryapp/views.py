@@ -18,6 +18,7 @@ from . import forms
 from django.db import transaction
 from django.shortcuts import HttpResponseRedirect
 from django.core import serializers
+from django.utils import timezone
 
 
 class CreateUpdateView(SingleObjectTemplateResponseMixin, ModelFormMixin, ProcessFormView):
@@ -130,9 +131,11 @@ class CreateInvitationView(LoginRequiredMixin, FormView):
         link = "http://" + current_site.domain + reverse('use-invitation', kwargs={'uidb64': uid, 'token': token})
         inv.link = link
         inv.save()
+        set_sent_time = False
         if form.cleaned_data['send_via'] in ['tx', 'bo']:
             message = 'Hello ' + form.cleaned_data['tenant_name'] + '! Message from app.  ' + link
             send_sms(form.cleaned_data['tenant_number'], message)
+            set_sent_time = True
         if form.cleaned_data['send_via'] in ['em', 'bo']:
             send_mail(
                 'Link inside to submit your information into the front gate directory',
@@ -141,6 +144,10 @@ class CreateInvitationView(LoginRequiredMixin, FormView):
                 [form.cleaned_data['tenant_email']],
                 fail_silently=False,
             )
+            set_sent_time = True
+        if set_sent_time:
+            inv.last_sent = timezone.now()
+            inv.save()
         return super(CreateInvitationView, self).form_valid(form)
 
     def get_initial(self):
