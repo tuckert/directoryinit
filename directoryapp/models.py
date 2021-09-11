@@ -128,7 +128,7 @@ class Invitation(models.Model):
 class InvitationUsage(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     invitation = models.ForeignKey(Invitation, on_delete=models.CASCADE, related_name='uses')
-    tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE, related_name='invitation_uses', null=True)
+    tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE, related_name='invitation_uses')
     ip_address = models.GenericIPAddressField()
     fields_updated = models.JSONField()
 
